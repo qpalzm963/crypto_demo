@@ -29,7 +29,7 @@ class KlineChartView extends HookConsumerWidget {
                   (klines) => Column(
                     children: [
                       SfCartesianChart(
-                        primaryXAxis: DateTimeAxis(),
+                        primaryXAxis: const DateTimeAxis(),
                         primaryYAxis: NumericAxis(
                           numberFormat: NumberFormat("#,##0.########"),
                         ),
@@ -59,7 +59,7 @@ class KlineChartView extends HookConsumerWidget {
                           NumericAxis(
                             name: 'volume',
                             opposedPosition: true,
-                            majorGridLines: const MajorGridLines(width: 0),
+                            majorGridLines: MajorGridLines(width: 0),
                             interval: 10000, // 你可以根據實際調整
                             isVisible: false,
                           ),

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class CryptoItem extends StatelessWidget {
+  const CryptoItem({super.key});
+
   @override
   Widget build(BuildContext context) {
     final List<SalesData> chartData = [
@@ -30,7 +32,7 @@ class CryptoItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(height: 40, child: CryptoType.bitcoin.image),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -39,11 +41,11 @@ class CryptoItem extends StatelessWidget {
               Text('0.4 btc', style: TextStyle(color: Colors.grey.shade700)),
             ],
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Expanded(
             child: SfCartesianChart(
-              primaryXAxis: DateTimeAxis(isVisible: false),
-              primaryYAxis: NumericAxis(isVisible: false),
+              primaryXAxis: const DateTimeAxis(isVisible: false),
+              primaryYAxis: const NumericAxis(isVisible: false),
               series: <CartesianSeries>[
                 // Renders line chart
                 LineSeries<SalesData, DateTime>(
@@ -59,7 +61,7 @@ class CryptoItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('\$ 22888.0'),
+              const Text('\$ 22888.0'),
               Text('-32% ', style: TextStyle(color: Colors.grey.shade700)),
             ],
           ),

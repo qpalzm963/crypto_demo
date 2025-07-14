@@ -11,7 +11,7 @@ class IntervalSelector extends ConsumerWidget {
     final options = ['1m', '5m', '1h', '1d', '1w'];
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: const Color.fromARGB(255, 226, 224, 239),

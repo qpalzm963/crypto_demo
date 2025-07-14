@@ -46,7 +46,7 @@ class LineChartWidget extends HookWidget {
     );
 
     return SfCartesianChart(
-      primaryXAxis: DateTimeAxis(),
+      primaryXAxis: const DateTimeAxis(),
       primaryYAxis: NumericAxis(
         numberFormat: NumberFormat("#,##0.########"),
         axisLabelFormatter: (details) {

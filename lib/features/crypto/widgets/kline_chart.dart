@@ -32,8 +32,8 @@ class KLineChart extends HookConsumerWidget {
     );
     return SfCartesianChart(
       zoomPanBehavior: zoomPanBehavior,
-      primaryXAxis: DateTimeAxis(),
-      primaryYAxis: NumericAxis(),
+      primaryXAxis: const DateTimeAxis(),
+      primaryYAxis: const NumericAxis(),
       series: <CandleSeries<Kline, DateTime>>[
         CandleSeries<Kline, DateTime>(
           dataSource: klines,

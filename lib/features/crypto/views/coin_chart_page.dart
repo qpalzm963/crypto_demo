@@ -21,25 +21,28 @@ class CoinChartPage extends ConsumerWidget {
       appBar: AppBar(title: Text(coinName)),
       body: asyncChart.when(
         data: (chart) {
-          final prices = chart.prices.map((e) => FlSpot(
-            e[0].toDouble(), e[1].toDouble()
-          )).toList();
+          final prices =
+              chart.prices
+                  .map((e) => FlSpot(e[0].toDouble(), e[1].toDouble()))
+                  .toList();
 
           return Padding(
             padding: const EdgeInsets.all(16),
-            child: LineChart(LineChartData(
-              lineBarsData: [
-                LineChartBarData(
-                  spots: prices,
-                  isCurved: true,
-                  dotData: FlDotData(show: false),
-                  color: Colors.blue,
-                ),
-              ],
-              titlesData: FlTitlesData(show: false),
-              gridData: FlGridData(show: false),
-              borderData: FlBorderData(show: false),
-            )),
+            child: LineChart(
+              LineChartData(
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: prices,
+                    isCurved: true,
+                    dotData: const FlDotData(show: false),
+                    color: Colors.blue,
+                  ),
+                ],
+                titlesData: const FlTitlesData(show: false),
+                gridData: const FlGridData(show: false),
+                borderData: FlBorderData(show: false),
+              ),
+            ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
