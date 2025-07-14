@@ -110,9 +110,12 @@ class CryptoMarket {
 
 @JsonSerializable()
 class MarketChart {
-  final List<List<num>> prices; // [ [timestamp, price], ... ]
+  final List<List<num>> prices;
+  @JsonKey(name: 'total_volumes')
+  final List<List<num>> volumes;
 
-  MarketChart({required this.prices});
+  MarketChart({required this.prices, required this.volumes});
+
 
   factory MarketChart.fromJson(Map<String, dynamic> json) =>
       _$MarketChartFromJson(json);
@@ -143,10 +146,9 @@ class OhlcPoint {
     required this.close,
   });
 }
-
 class Kline {
   final DateTime openTime;
-  final double open, high, low, close;
+  final double open, high, low, close, volume;
 
   Kline({
     required this.openTime,
@@ -154,6 +156,7 @@ class Kline {
     required this.high,
     required this.low,
     required this.close,
+    required this.volume,
   });
 
   factory Kline.fromList(List<dynamic> list) {
@@ -163,6 +166,7 @@ class Kline {
       high: double.parse(list[2]),
       low: double.parse(list[3]),
       close: double.parse(list[4]),
+      volume: double.parse(list[5]),  // 第 6 個
     );
   }
 }

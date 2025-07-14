@@ -104,10 +104,17 @@ MarketChart _$MarketChartFromJson(Map<String, dynamic> json) => MarketChart(
       (json['prices'] as List<dynamic>)
           .map((e) => (e as List<dynamic>).map((e) => e as num).toList())
           .toList(),
+  volumes:
+      (json['total_volumes'] as List<dynamic>)
+          .map((e) => (e as List<dynamic>).map((e) => e as num).toList())
+          .toList(),
 );
 
 Map<String, dynamic> _$MarketChartToJson(MarketChart instance) =>
-    <String, dynamic>{'prices': instance.prices};
+    <String, dynamic>{
+      'prices': instance.prices,
+      'total_volumes': instance.volumes,
+    };
 
 SparklineData _$SparklineDataFromJson(Map<String, dynamic> json) =>
     SparklineData(

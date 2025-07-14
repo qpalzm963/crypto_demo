@@ -1,10 +1,9 @@
-import 'package:crypto_app/features/crypto/models/crypto_market/crypto_market.dart';
-import 'package:crypto_app/features/crypto/providers/coingecko_api_provider.dart';
-import 'package:crypto_app/features/crypto/widgets/coin_line_chart.dart';
+import 'package:crypto_app/features/crypto/providers/chart_provider.dart';
+import 'package:crypto_app/features/crypto/widgets/kline_chart_widget.dart';
+import 'package:crypto_app/features/crypto/widgets/coin_chart_widget.dart';
 import 'package:crypto_app/features/crypto/widgets/price_range_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 
 class CoinDetailPage extends ConsumerWidget {
   final String coinId;
@@ -14,6 +13,7 @@ class CoinDetailPage extends ConsumerWidget {
   final double priceChange24h;
   final double low24h;
   final double high24h;
+  final int vol;
   final double? h1, h24, d7, d14, d30, y1;
   const CoinDetailPage({
     super.key,
@@ -28,16 +28,14 @@ class CoinDetailPage extends ConsumerWidget {
     this.d7 = 0,
     this.h1 = 0,
     this.h24 = 0,
+    this.vol = 0,
     this.d30 = 0,
     this.y1 = 0,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final asyncChart = ref.watch(marketChartProvider(coinId));
-
     final percentageChange = priceChange24h >= 0;
-    final chartDays = ref.watch(chartDaysProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(coinName)),
@@ -47,88 +45,70 @@ class CoinDetailPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '\$${currentPrice.toStringAsFixed(2)}',
-                style: Theme.of(context).textTheme.headlineLarge,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '\$${currentPrice.toStringAsFixed(2)}',
+                      style: Theme.of(context).textTheme.headlineLarge,
+                    ),
+                  ),
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final isKline = ref.watch(isKlineProvider);
+                      return IconButton(
+                        icon: Icon(
+                          isKline ? Icons.show_chart : Icons.candlestick_chart,
+                        ),
+                        // label: Text(!isKline ? '切換成 K 線' : '切換成折線'),
+                        onPressed: () {
+                          ref.read(isKlineProvider.notifier).state = !isKline;
+                        },
+                      );
+                    },
+                  ),
+                ],
               ),
               Text(
                 '${priceChange24h.toStringAsFixed(2)}% (24h)',
                 style: TextStyle(
                   color: percentageChange ? Colors.green : Colors.red,
                   fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              Consumer(
-                builder: (context, ref, _) {
-                  final isKline = ref.watch(isKlineProvider);
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton.icon(
-                        icon: Icon(
-                          isKline ? Icons.show_chart : Icons.candlestick_chart,
-                        ),
-                        label: Text(isKline ? '切換成 K 線' : '切換成折線'),
-                        onPressed: () {
-                          ref.read(isKlineProvider.notifier).state = !isKline;
-                        },
-                      ),
-                    ],
-                  );
-                },
+
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: PriceRangeBar(
+                      current: currentPrice,
+                      low: low24h,
+                      high: high24h,
+                      vol: vol,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              PriceRangeBar(current: currentPrice, low: low24h, high: high24h),
-              const SizedBox(height: 16),
-              TimeRangeTabs(),
               const SizedBox(height: 16),
               Expanded(
                 child: Consumer(
                   builder: (context, ref, _) {
                     final isKline = ref.watch(isKlineProvider);
-                    if (isKline) {
-                      final klineAsync = ref.watch(klineProvider('${symbol.toUpperCase()}USDT'));
-                      return klineAsync.when(
-                        data:
-                            (klines) => SfCartesianChart(
-                              primaryXAxis: DateTimeAxis(),
-                              series: <CandleSeries<Kline, DateTime>>[
-                                CandleSeries<Kline, DateTime>(
-                                  dataSource: klines,
-                                  xValueMapper: (k, _) => k.openTime,
-                                  lowValueMapper: (k, _) => k.low,
-                                  highValueMapper: (k, _) => k.high,
-                                  openValueMapper: (k, _) => k.open,
-                                  closeValueMapper: (k, _) => k.close,
-                                ),
-                              ],
-                              trackballBehavior: TrackballBehavior(
-                                enable: true,
+                    return AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      child:
+                          isKline
+                              ? KlineChartView(
+                                key: const ValueKey('kline'),
+                                symbol: symbol,
+                              )
+                              : CoinChartWidget(
+                                key: const ValueKey('line'),
+                                coinId: coinId,
                               ),
-                              zoomPanBehavior: ZoomPanBehavior(
-                                enablePinching: true,
-                                enablePanning: true,
-                              ),
-                            ),
-                        loading:
-                            () => const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                        error: (err, _) => Center(child: Text('Error: $err')),
-                      );
-                    } else {
-                      final chartAsync = ref.watch(marketChartProvider(coinId));
-                      return chartAsync.when(
-                        data:
-                            (chart) =>
-                                CoinLineChart(prices: chart.prices), // 你的折線圖元件
-                        loading:
-                            () => const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                        error: (err, _) => Center(child: Text('Error: $err')),
-                      );
-                    }
+                    );
                   },
                 ),
               ),

@@ -3,25 +3,9 @@ import 'dart:convert';
 
 import 'package:crypto_app/features/crypto/api/coin_gecko_api.dart';
 import 'package:crypto_app/features/crypto/models/crypto_market/crypto_market.dart';
+import 'package:crypto_app/features/crypto/providers/chart_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-final chartDaysProvider = StateProvider<int>((ref) => 1);
-
-final isKlineProvider = StateProvider<bool>((ref) => false);
-final klineIntervalProvider = StateProvider<String>((ref) => '1h');
-final klineProvider = FutureProvider.family<List<Kline>, String>((
-  ref,
-  symbol,
-) async {
-  final dio = Dio();
-  final interval = ref.watch(klineIntervalProvider);
-  final res = await dio.get(
-    'https://api.binance.com/api/v3/klines',
-    queryParameters: {'symbol': symbol, 'interval': interval, 'limit': 100},
-  );
-  return (res.data as List).map((e) => Kline.fromList(e)).toList();
-});
 
 final dioProvider = Provider((ref) {
   final dio = Dio();
@@ -51,7 +35,7 @@ final coinGeckoApiProvider = Provider((ref) {
 
 final topMarketsProvider = FutureProvider((ref) async {
   final api = ref.watch(coinGeckoApiProvider);
-  return api.getTopMarkets(perPage: 4, sparkline: true);
+  return api.getTopMarkets(perPage: 10, sparkline: true);
 });
 
 final marketChartProvider = FutureProvider.family<MarketChart, String>((
